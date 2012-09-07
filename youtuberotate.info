@@ -1,0 +1,4 @@
+; $Id$
+name = "YouTube Movie Rotator"
+description = "Creates a block displaying a single random YouTube video from a user-provided list."
+core = 6.x

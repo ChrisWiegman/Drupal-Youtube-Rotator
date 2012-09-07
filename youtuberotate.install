@@ -1,0 +1,46 @@
+<?php
+// $Id$ 
+
+/**
+ * @file
+ * Implement CCK's install/uninstall hooks.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function youtuberotate_install() {
+	variable_set('youtuberotate_height', "238");
+	variable_set('youtuberotate_width', "296");
+	drupal_load('module', 'content');
+	content_notify('install', 'youtuberotate');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function youtuberotate_uninstall() {
+	db_query("DELETE FROM {variable} WHERE name LIKE 'youtuberotate_%'");
+	drupal_load('module', 'content');
+	content_notify('uninstall', 'youtuberotate');
+}
+
+/**
+ * Implementation of hook_enable().
+ *
+ * Notify content module when this module is enabled.
+ */
+function youtuberotate_enable() {
+	drupal_load('module', 'content');
+	content_notify('enable', 'youtuberotate');
+}
+
+/**
+ * Implementation of hook_disable().
+ *
+ * Notify content module when this module is disabled.
+ */
+function youtuberotate_disable() {
+	drupal_load('module', 'content');
+	content_notify('disable', 'youtuberotate');
+}
