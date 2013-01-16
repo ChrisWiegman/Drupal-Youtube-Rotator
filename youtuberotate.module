@@ -11,7 +11,7 @@
   * @return array An array of valid permissions for the youtuberotate module
  */
 function youtuberotate_perm() {
-	return array('access youtube rotator content', 'administer youtube rotator');
+	return array( 'access youtube rotator content', 'administer youtube rotator' );
 }
 
 /**
@@ -20,54 +20,54 @@ function youtuberotate_perm() {
 function youtuberotate_admin() {
 	$form = array();
 
-  	$form['settings']['youtuberotate_account'] = array(
-    	'#type' => 'textfield',
-	    '#title' => t('YouTube UserName'),
-    	'#default_value' => variable_get('youtuberotate_account'),
-	    '#size' => 20,
-	    '#description' => t("Enter the YouTube username for a link back to the YouTube page. This is used only for the url and will not be displayed to the user."),
-    	'#required' => FALSE,
+	$form['settings']['youtuberotate_account'] = array(
+		'#type' 			=> 'textfield',
+		'#title' 			=> t( 'YouTube UserName' ),
+		'#default_value' 	=> variable_get( 'youtuberotate_account', '' ),
+		'#size' 			=> 20,
+		'#description' 		=> t( 'Enter the YouTube username for a link back to the YouTube page. This is used only for the url and will not be displayed to the user.' ),
+		'#required' 		=> FALSE,
 	);
 	
 	$form['settings']['youtuberotate_displayname'] = array(
-    	'#type' => 'textfield',
-	    '#title' => t('YouTube Display Name'),
-    	'#default_value' => variable_get('youtuberotate_displayname'),
-	    '#size' => 20,
-	    '#description' => t("Enter the name of the YouTube account you would like it displayed to the user."),
-    	'#required' => FALSE,
+		'#type' 			=> 'textfield',
+		'#title' 			=> t( 'YouTube Display Name' ),
+		'#default_value' 	=> variable_get( 'youtuberotate_displayname', '' ),
+		'#size' 			=> 20,
+		'#description' 		=> t( 'Enter the name of the YouTube account you would like it displayed to the user.' ),
+		'#required' 		=> FALSE,
 	);
-  	
-  	$form['settings']['youtuberotate_height'] = array(
-    	'#type' => 'textfield',
-	    '#title' => t('Video Height'),
-    	'#default_value' => variable_get('youtuberotate_height'),
-	    '#size' => 4,
-	    '#description' => t("Enter the height of the video in pixels."),
-    	'#required' => TRUE,
+	
+	$form['settings']['youtuberotate_height'] = array(
+		'#type' 			=> 'textfield',
+		'#title' 			=> t( 'Video Height' ),
+		'#default_value' 	=> variable_get( 'youtuberotate_height', '238' ),
+		'#size' 			=> 4,
+		'#description' 		=> t( 'Enter the height of the video in pixels.' ),
+		'#required' 		=> TRUE,
 	);
 	
 	$form['settings']['youtuberotate_width'] = array(
-    	'#type' => 'textfield',
-	    '#title' => t('Video Width'),
-    	'#default_value' => variable_get('youtuberotate_width'),
-	    '#size' => 4,
-	    '#description' => t("Enter the width of the video in pixels."),
-    	'#required' => TRUE,
+		'#type' 			=> 'textfield',
+		'#title' 			=> t( 'Video Width' ),
+		'#default_value' 	=> variable_get( 'youtuberotate_width', '296' ),
+		'#size' 			=> 4,
+		'#description' 		=> t( 'Enter the width of the video in pixels.' ),
+		'#required' 		=> TRUE,
 	);
-  	
-  	$form['youtuberotate_movieids'] = array(
-    	'#type' => 'textarea',
-	    '#title' => t('List of YouTube Movie URLs'),
-    	'#default_value' => variable_get('youtuberotate_movieids'),
-	    '#cols' => 60,
-	    '#rows' => 10,
-    	'#resizable' => TRUE,
-	    '#description' => t("Enter the list of YouTube movie URLs (1 per line)."),
-    	'#required' => TRUE,
+	
+	$form['youtuberotate_movieids'] = array(
+		'#type' 			=> 'textarea',
+		'#title' 			=> t( 'List of YouTube Movie URLs' ),
+		'#default_value' 	=> variable_get( 'youtuberotate_movieids', '' ),
+		'#cols' 			=> 60,
+		'#rows' 			=> 10,
+		'#resizable' 		=> TRUE,
+		'#description' 		=> t( 'Enter the list of YouTube movie URLs (1 per line).' ),
+		'#required' 		=> TRUE,
 	);
 
-  	return system_settings_form($form);
+	return system_settings_form( $form );
 }
 
 /**
@@ -75,50 +75,61 @@ function youtuberotate_admin() {
  */
 function youtuberotate_menu() {
 
-  	$items = array();
+	$items = array();
 
-  	$items['admin/settings/youtuberotate'] = array(
-    	'title' => 'YouTube Rotator Settings',
-	    'description' => 'Administer YouTube Rotator Settings',
-    	'page callback' => 'drupal_get_form',
-	    'page arguments' => array('youtuberotate_admin'),
-    	'access arguments' => array('administer youtube rotator'),
-	    'type' => MENU_NORMAL_ITEM,
-   	);
+	$items['admin/settings/youtuberotate'] = array(
+		'title' 			=> 'YouTube Rotator Settings',
+		'description' 		=> 'Administer YouTube Rotator Settings',
+		'page callback' 	=> 'drupal_get_form',
+		'page arguments' 	=> array( 'youtuberotate_admin' ),
+		'access arguments' 	=> array( 'administer youtube rotator' ),
+		'type' 				=> MENU_NORMAL_ITEM,
+	);
 
-  	return $items;
+	return $items;
 }
 
 /**
  *Validate user input
  */
-function youtuberotate_admin_validate($form, &$form_state) {
-	$movieStr = explode("\n",$form_state['values']['youtuberotate_movieids']);
+function youtuberotate_admin_validate( $form, &$form_state ) {
+
+	$movieStr = explode( "\n", $form_state['values']['youtuberotate_movieids'] );
 	$ct = 1;
-	foreach ($movieStr as &$value) {
-		$value = substr($value,0,strlen($value)-1);
-  		if (!valid_url($value,TRUE) || !strstr($value,'youtube.com')) {
-    		form_set_error('youtuberotate_movieids', t('The Movie <em>' . $value . '</em> on line ' . $ct . ' does not appear to be a valid YouTube movie.'));
-  		}
-  		$ct++;
-  	}
+
+	foreach ( $movieStr as &$value ) {
+
+		$value = substr( $value, 0, strlen( $value ) - 1 );
+
+		if ( ! valid_url( $value, TRUE ) || ! strstr( $value, 'youtube.com' ) ) {
+			form_set_error( 'youtuberotate_movieids', t( 'The Movie <em>' . $value . '</em> on line ' . $ct . ' does not appear to be a valid YouTube movie.' ) );
+		}
+
+		$ct++;
+
+	}
+
 }
 
 /**
  *Create a block for displaying the videos
  */
-function youtuberotate_block($op='list', $delta=0, $edit=array()) {
+function youtuberotate_block( $op='list', $delta=0, $edit=array() ) {
+
 	switch ($op) {
+
 		case 'list':
-			$blocks[0]['info'] = t('YouTube Rotator');
+			$blocks[0]['info'] = t( 'YouTube Rotator' );
 			return $blocks;
 			break;
 		case 'view':
-			$blocks['subject'] = t('YouTube Video Rotator');
+			$blocks['subject'] = t( 'YouTube Video Rotator' );
 			$blocks['content'] = youtuberotate_content();
 			return $blocks;
 			break;
+
 	}
+
 }
 
 /**
@@ -126,23 +137,22 @@ function youtuberotate_block($op='list', $delta=0, $edit=array()) {
  */
 function youtuberotate_content() {
 
-	$movieStr = explode("\n",variable_get('youtuberotate_movieids',0));
-	$chosen = array_rand($movieStr,1);
+	$movieStr = explode( "\n", variable_get( 'youtuberotate_movieids', 0 ) );
+	$chosen = array_rand( $movieStr, 1 );
 	$movieUrl = $movieStr[$chosen];
-	if (strstr($movieUrl, "watch")) {
-		$eSign = strpos($movieUrl,"=") + 1;
-		$movieUrl = substr($movieUrl,$eSign,strlen($movieUrl));
+
+	if ( strstr( $movieUrl, 'watch' ) ) {
+		$eSign = strpos( $movieUrl, '=' ) + 1;
+		$movieUrl = substr( $movieUrl, $eSign, strlen( $movieUrl ) );
 	} else {
-		$eSign = strrpos($movieUrl,"/") + 1;
-		$movieUrl = substr($movieUrl,$eSign,strlen($movieUrl));
+		$eSign = strrpos( $movieUrl, '/' ) + 1;
+		$movieUrl = substr( $movieUrl, $eSign, strlen( $movieUrl ) );
 	}
 	
-	if (strlen(variable_get('youtuberotate_account',0)) > 1) {	
-		$ytMoreLink = '<a href="http://www.youtube.com/thesiucaviation" target="_blank">View all ' . variable_get('youtuberotate_displayname',"our") . ' videos</a>';
+	if ( strlen( variable_get( 'youtuberotate_account', 0 ) ) > 1 ) {	
+		$ytMoreLink = '<a href="http://www.youtube.com/thesiucaviation" target="_blank">View all ' . variable_get( 'youtuberotate_displayname', 'our' ) . ' videos</a>';
 	}
-	
-	return '<object data="http://www.youtube.com/v/' . $movieUrl . '?rel=0" style="width: ' . variable_get('youtuberotate_width',0) . 'px; height: ' . variable_get('youtuberotate_height',0) . 'px;" type="application/x-shockwave-flash"><param name="movie" value="http://www.youtube.com/v/' . $movieUrl . '?rel=0" />
-	<span>It appears you do not have the <a href="http://www.adobe.com/products/flashplayer/" title="Flash Plugin" rel="external">Flash</a> plugin installed. Flash is required to view this SIUC Aviation video.</span> </object>' . $ytMoreLink;
-	
+
+	return '<iframe width="' . variable_get( 'youtuberotate_width', 0 ) . '" height="' . variable_get( 'youtuberotate_height', 0 ) . '" src="http://www.youtube.com/embed/' . $movieUrl . '" frameborder="0" allowfullscreen></iframe><br />' . $ytMoreLink;
 	
 }
